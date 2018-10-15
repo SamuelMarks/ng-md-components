@@ -1,14 +1,17 @@
 {
   "name": "ng-md-components",
   "version": "0.0.1",
-  "description": "",
+  "description": "Markdown `templateUrl` support for Angular.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Samuel Marks <samuel@offscale.io>",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^10.11.7"
+  },
+  "dependencies": {
+    "marked-ts": "^1.0.0-beta.4"
   }
 }

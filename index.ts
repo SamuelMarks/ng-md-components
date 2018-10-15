@@ -3,29 +3,36 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const walk = (dir: string, endswith: string, done: (err?: NodeJS.ErrnoException, results?: string[]) => void): void => {
-  let results: string[] = [];
+import { Marked } from 'marked-ts';
+
+const walk = (dir: string, endswith: string,
+              callback: (err?: NodeJS.ErrnoException) => void): void => {
   fs.readdir(dir, (err: NodeJS.ErrnoException, files: string[]) => {
-    if (err) return done(err);
+    if (err) return callback(err);
     let pending = files.length;
-    if (!pending) return done(void 0, results);
-    files.forEach((file: string) => {
-      file = path.resolve(dir, file);
-      fs.stat(file, (err: NodeJS.ErrnoException, stats: fs.Stats) => {
-        if (stats && stats.isDirectory()) {
-          if (['node_modules' /* TODO: parse .gitignore */].indexOf(path.basename(file)) > -1)
-            !--pending && done(void 0, results);
+    if (!pending) return callback(void 0);
+    files.forEach((fname: string) => {
+      fname = path.resolve(dir, fname);
+      fs.stat(fname, (error: NodeJS.ErrnoException, stats: fs.Stats) => {
+        if (error != null) return callback(error);
+        else if (stats && stats.isDirectory()) {
+          if (['node_modules' /* TODO: parse .gitignore */].indexOf(path.basename(fname)) > -1)
+            !--pending && callback(void 0);
           else
-            walk(file, endswith, (err?: NodeJS.ErrnoException, res?: string[]) => {
-              if (typeof res !== 'undefined')
-                results = results.concat(res);
-              if (!--pending) done(void 0, results);
+            walk(fname, endswith, (e?: NodeJS.ErrnoException) => {
+              if (e != null) return callback(e);
+              if (!--pending) callback(void 0);
             });
-        } else {
-          if (file.length >= endswith.length && file.slice(file.length - endswith.length) === endswith)
-            results.push(file);
-          if (!--pending) done(void 0, results);
-        }
+        } else if (fname.length >= endswith.length && fname.slice(fname.length - endswith.length) === endswith)
+          parseTemplateUrl(fname, (er, templateUrl) => {
+            if (er != null) return callback(er);
+            handleMarkdown(fname, templateUrl == null ? templateUrl
+              : path.join(path.dirname(fname), templateUrl), (e_r, to_fname) => {
+              if (e_r != null) return callback(e_r);
+              console.info(`GENERATED\t${to_fname}`);
+              if (!--pending) callback(void 0);
+            })
+          });
       });
     });
   });
@@ -33,20 +40,32 @@ const walk = (dir: string, endswith: string, done: (err?: NodeJS.ErrnoException,
 
 const neg1_to_max = (n: number): number => n === -1 ? Number.MAX_SAFE_INTEGER : n;
 
-const parseTemplateUrl = (fname: string): string => {
-  const data = fs.readFileSync(fname, 'utf8').replace(/\s/g, '');
-  const j = data.slice(data.indexOf('templateUrl') + 'templateUrl'.length + 4);
-  return j.slice(0, ((a, b) => a > b ? b : a)(neg1_to_max(j.indexOf('\'')), neg1_to_max(j.indexOf('"'))));
+// *VERY* basic parser. Doesn't handle comments.
+const parseTemplateUrl = (fname: string, callback: (err?: NodeJS.ErrnoException, data?: string) => void) => {
+  fs.readFile(fname, 'utf8', (err, data) => {
+    if (err != null) return callback(err);
+    data = data.replace(/\s/g, '');
+    const j = data.slice(data.indexOf('templateUrl') + 'templateUrl'.length + 4);
+    return callback(void 0,
+      j.slice(0, ((a, b) => a > b ? b : a)(neg1_to_max(j.indexOf('\'')), neg1_to_max(j.indexOf('"')))));
+  });
+};
+
+const handleMarkdown = (fname: string, templateUrl: string | undefined,
+                        callback: (err?: NodeJS.ErrnoException, to_fname?: string) => void): void => {
+  if (templateUrl != null && templateUrl.endsWith('.md'))
+    fs.readFile(templateUrl, 'utf8', (err, data) => {
+      if (err != null) callback(err);
+      const to_fname = `${templateUrl.substr(0, templateUrl.length - 3)}.html`;
+      fs.writeFile(to_fname, Marked.parse(data), 'utf8', e => callback(e, to_fname));
+    })
 };
 
 if (require.main === module) {
   if (process.argv.length < 3)
     throw Error(`Usage: ${process.argv} PATH`);
 
-  walk(process.argv[2], '.component.ts', (err, fnames) => {
+  walk(process.argv[2], '.component.ts', err => {
     if (err != null) throw err;
-    else if (fnames == null || !fnames.length) throw TypeError('fnames is empty');
-    const m = new Map<string, string>(fnames.map(fname => [fname, parseTemplateUrl(fname)]) as any);
-    console.info(m);
   });
 }

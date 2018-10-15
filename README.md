@@ -24,3 +24,26 @@ Alright, that all worked. This uses [`fd`](https://github.com/sharkdp/fd), [`bas
 ---
 
 Let's put this reversal into `angular.json` (or generated webpack), and rewrite in TypeScript/JavaScript instead. That's the purpose of this package.
+
+## Approach
+Comment:
+
+    // templateUrl: './a.component.md'
+    @Component({
+      selector: 'app-a',
+      templateUrl: './a.component.html',
+      styleUrls: ['./a.component.css']
+    })
+    export class AComponent {}
+
+Here any existing `a.component.html` will be replaced.
+
+## Different approaches
+
+Extend `@Component` or create new decorator.
+
+### Advantages
+- Can be used without any new precompilation stage
+
+### Disadvantage
+- Bundle size
