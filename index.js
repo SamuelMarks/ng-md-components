@@ -52,14 +52,16 @@ const walk = (dir, endswith, callback) => {
     });
 };
 const neg1_to_max = (n) => n === -1 ? Number.MAX_SAFE_INTEGER : n;
-// *VERY* basic parser. Doesn't handle comments.
+// *VERY* basic parser. Doesn't handle comments. In fact, you are recommended to set `templateUrl` in a comment!
 const parseTemplateUrl = (fname, callback) => {
     fs.readFile(fname, 'utf8', (err, data) => {
         if (err != null)
             return callback(err);
         data = data.replace(/\s/g, '');
         const j = data.slice(data.indexOf('templateUrl') + 'templateUrl'.length + 4);
-        return callback(void 0, j.slice(0, ((a, b) => a > b ? b : a)(neg1_to_max(j.indexOf('\'')), neg1_to_max(j.indexOf('"')))));
+        return callback(void 0, j.slice(0, ['\'', '"', '`']
+            .map(c => neg1_to_max(j.indexOf(c)))
+            .reduce((a, b) => a > b ? b : a, Number.MAX_SAFE_INTEGER)));
     });
 };
 const handleMarkdown = (fname, templateUrl, callback) => {

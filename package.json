@@ -1,6 +1,6 @@
 {
   "name": "ng-md-components",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Markdown `templateUrl` support for Angular.",
   "main": "index.js",
   "scripts": {
