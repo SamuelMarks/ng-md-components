@@ -4,6 +4,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { Marked } from 'marked-ts';
+import { highlight } from 'highlight.js';
+import * as readline from 'readline';
+
+Marked.setOptions({ highlight: (code, lang) => highlight(lang as string, code).value });
 
 const walk = (dir: string, endswith: string,
               callback: (err?: NodeJS.ErrnoException) => void): void => {
@@ -29,8 +33,11 @@ const walk = (dir: string, endswith: string,
             handleMarkdown(fname, templateUrl == null ? templateUrl
               : path.join(path.dirname(fname), templateUrl), (e_r, to_fname) => {
               if (e_r != null) return callback(e_r);
-              console.info(`GENERATED\t${to_fname}`);
-              if (!--pending) callback(void 0);
+              escapeBrace(to_fname as string, erro => {
+                if (erro != null) return callback(erro);
+                console.info(`GENERATED\t${to_fname}`);
+                if (!--pending) callback(void 0);
+              })
             })
           });
       });
@@ -61,6 +68,26 @@ const handleMarkdown = (fname: string, templateUrl: string | undefined,
       const to_fname = `${templateUrl.substr(0, templateUrl.length - 3)}.html`;
       fs.writeFile(to_fname, Marked.parse(data), 'utf8', e => callback(e, to_fname));
     })
+};
+
+const escapeBrace = (fname: string, callback: (err?: NodeJS.ErrnoException) => void): void => {
+  // TODO: Character by character parser, to support one line blocks
+
+  const lineReader = readline.createInterface({
+    input: fs.createReadStream(fname)
+  });
+  let lines: string[] = [];
+  let code_block = 0;
+
+  lineReader.on('line', (line: string) => {
+    if ((code_block & 1) !== 0)
+      line = line.replace(`{`, `{{'{'}}`);
+    code_block += ['<code', '</code'].reduce((a, b) => a + line.indexOf(b) > -1 as any as number, 0);
+    lines.push(line);
+  });
+  lineReader.on('close', () =>
+    fs.writeFile(fname, lines.join('\n'), callback)
+  );
 };
 
 if (require.main === module) {

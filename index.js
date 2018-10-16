@@ -11,6 +11,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const marked_ts_1 = require("marked-ts");
+const highlight_js_1 = require("highlight.js");
+const readline = __importStar(require("readline"));
+marked_ts_1.Marked.setOptions({ highlight: (code, lang) => highlight_js_1.highlight(lang, code).value });
 const walk = (dir, endswith, callback) => {
     fs.readdir(dir, (err, files) => {
         if (err)
@@ -42,9 +45,13 @@ const walk = (dir, endswith, callback) => {
                             : path.join(path.dirname(fname), templateUrl), (e_r, to_fname) => {
                             if (e_r != null)
                                 return callback(e_r);
-                            console.info(`GENERATED\t${to_fname}`);
-                            if (!--pending)
-                                callback(void 0);
+                            escapeBrace(to_fname, erro => {
+                                if (erro != null)
+                                    return callback(erro);
+                                console.info(`GENERATED\t${to_fname}`);
+                                if (!--pending)
+                                    callback(void 0);
+                            });
                         });
                     });
             });
@@ -72,6 +79,21 @@ const handleMarkdown = (fname, templateUrl, callback) => {
             const to_fname = `${templateUrl.substr(0, templateUrl.length - 3)}.html`;
             fs.writeFile(to_fname, marked_ts_1.Marked.parse(data), 'utf8', e => callback(e, to_fname));
         });
+};
+const escapeBrace = (fname, callback) => {
+    // TODO: Character by character parser, to support one line blocks
+    const lineReader = readline.createInterface({
+        input: fs.createReadStream(fname)
+    });
+    let lines = [];
+    let code_block = 0;
+    lineReader.on('line', (line) => {
+        if ((code_block & 1) !== 0)
+            line = line.replace(`{`, `{{'{'}}`);
+        code_block += ['<code', '</code'].reduce((a, b) => a + line.indexOf(b) > -1, 0);
+        lines.push(line);
+    });
+    lineReader.on('close', () => fs.writeFile(fname, lines.join('\n'), callback));
 };
 if (require.main === module) {
     if (process.argv.length < 3)

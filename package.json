@@ -1,6 +1,6 @@
 {
   "name": "ng-md-components",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Markdown `templateUrl` support for Angular.",
   "main": "index.js",
   "scripts": {
@@ -9,9 +9,11 @@
   "author": "Samuel Marks <samuel@offscale.io>",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^10.11.7"
+    "@types/node": "^10.11.7",
+    "@types/highlight.js": "^9.12.3"
   },
   "dependencies": {
+    "highlight.js": "^9.13.0",
     "marked-ts": "^1.0.0-beta.4"
   }
 }
