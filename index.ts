@@ -4,10 +4,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { Marked } from 'marked-ts';
-import { highlight } from 'highlight.js';
 import * as readline from 'readline';
 
-Marked.setOptions({ highlight: (code, lang) => highlight(lang as string, code).value });
+// Marked.setOptions({ highlight: (code, lang) => highlight(lang as string, code).value });
 
 const walk = (dir: string, endswith: string,
               callback: (err?: NodeJS.ErrnoException) => void): void => {
@@ -76,7 +75,7 @@ const escapeBrace = (fname: string, callback: (err?: NodeJS.ErrnoException) => v
   const lineReader = readline.createInterface({
     input: fs.createReadStream(fname)
   });
-  let lines: string[] = [];
+  let lines: string[] = [`<!-- GENERATED FROM './${path.basename(fname).slice(0, -5)}.md'. EDIT THAT, XOR DELETE AND EDIT THIS! -->\n`];
   let code_block = 0;
 
   lineReader.on('line', (line: string) => {

@@ -11,9 +11,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const marked_ts_1 = require("marked-ts");
-const highlight_js_1 = require("highlight.js");
 const readline = __importStar(require("readline"));
-marked_ts_1.Marked.setOptions({ highlight: (code, lang) => highlight_js_1.highlight(lang, code).value });
+// Marked.setOptions({ highlight: (code, lang) => highlight(lang as string, code).value });
 const walk = (dir, endswith, callback) => {
     fs.readdir(dir, (err, files) => {
         if (err)
@@ -85,7 +84,7 @@ const escapeBrace = (fname, callback) => {
     const lineReader = readline.createInterface({
         input: fs.createReadStream(fname)
     });
-    let lines = [];
+    let lines = [`<!-- GENERATED FROM './${path.basename(fname).slice(0, -5)}.md'. EDIT THAT, XOR DELETE AND EDIT THIS! -->\n`];
     let code_block = 0;
     lineReader.on('line', (line) => {
         if ((code_block & 1) !== 0)
