@@ -1,13 +1,24 @@
 ng-md-components
 ================
 
-Markdown `templateUrl` support for Angular.
+Markdown `templateUrl` support for Angular
+
+[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
+[![Version](https://img.shields.io/npm/v/ng-md-components.svg)](https://npmjs.org/package/ng-md-components)
+[![Downloads/week](https://img.shields.io/npm/dw/ng-md-components.svg)](https://npmjs.org/package/ng-md-components)
+[![License](https://img.shields.io/npm/l/ng-md-components.svg)](https://github.com/SamuelMarks/ng-md-components/blob/master/package.json)
+
+<!-- toc -->
+# Usage
+<!-- usage -->
+# Commands
+<!-- commands -->
 
 ## Test setup
 
 Let's create an Angular application, using Markdown rather than HTML:
 
-    ng new --skip-install a && cd a
+    ng new --skip-install --interactive=false a && cd $_
     for c in {a..z}; do ng g m "$c"; ng g c "$c"; done
     fd .html -exec bash -c 'f=${0%.*}; pandoc "$0" -o "$f.md"; rm "$0"' {} \;
     fd .component.ts -exec sed -i 's/component.html/component.md/g' {} \;
