@@ -10,11 +10,20 @@ Markdown `templateUrl` support for Angular
 
 <!-- toc -->
 # Usage
-<!-- usage -->
+
+    $ ng-md-components --help
+
+    OPTIONS
+      -d, --directory=directory  (required) Directory to recurse through
+      -e, --ext=ext              [default: .md] File extension to look for
+      -h, --help                 show CLI help
+      -v, --version              show CLI version
+
 # Commands
 <!-- commands -->
 
-## Test setup
+
+## Alternative to `ng-md-components`
 
 Let's create an Angular application, using Markdown rather than HTML:
 
