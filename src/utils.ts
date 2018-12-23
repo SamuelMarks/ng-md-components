@@ -35,7 +35,7 @@ export const recursiveMd2Html = (dir: string, ext: string, callback: (err?: Node
                                 if (e_r != null) return callback(e_r);
                                 escapeBrace(to_fname as string, ext, erro => {
                                     if (erro != null) return callback(erro);
-                                    console.info(`GENERATED\t${to_fname}`);
+                                    console.info(`Generated:\t ${to_fname}`);
                                     if (!--pending) callback(void 0);
                                 });
                             });
@@ -78,19 +78,19 @@ const escapeBrace = (fname: string, ext: string, callback: (err?: NodeJS.ErrnoEx
         input: fs.createReadStream(fname)
     });
     const lines: string[] = [
-        `<!-- GENERATED FROM './${path.basename(fname).slice(0, -5)}.${ext}'. ` +
+        `<!-- GENERATED FROM './${path.basename(fname).slice(0, -5)}${ext}'. ` +
         'EDIT THAT, XOR DELETE AND EDIT THIS! -->\n'
     ];
     let code_block = 0;
 
     lineReader.on('line', (line: string) => {
         /* tslint:disable:no-bitwise */
-        if ((code_block & 1) !== 0)
-            line = line.replace(`{`, `{{'{'}}`);
+        /*if ((code_block & 1) !== 0)
+            line = line.replace(/{/g, `{{'{'}}`);*/
         code_block += ['<code', '</code'].reduce((a, b) => a + line.indexOf(b) > -1 as any as number, 0);
         lines.push(line);
     });
     lineReader.on('close', () =>
-        fs.writeFile(fname, lines.join('\n'), callback)
+        fs.writeFile(fname, lines.join('\n').replace(/{/g, '&#0123;'), callback)
     );
 };
