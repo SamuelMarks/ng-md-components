@@ -45,6 +45,8 @@ Disadvantages: the `fd` and `bash` aren't really cross-platform, and `pandoc` do
 Open a file, let's use `src/app/a/a.component.ts`:
 
 ```TypeScript
+import { Component, OnInit } from '@angular/core';
+
 // templateUrl: './a.component.md' <-- add this line
 
 @Component({
