@@ -3,8 +3,10 @@ import * as fs from 'fs';
 import { Marked } from 'marked-ts';
 import * as path from 'path';
 import * as readline from 'readline';
+import { highlight } from 'highlight.js';
 
-// Marked.setOptions({ highlight: (code, lang) => highlight(lang as string, code).value });
+Marked.setOptions({ highlight: (code, lang) => lang == null? code : highlight(lang, code).value });
+
 
 export const recursiveMd2Html = (dir: string, ext: string, callback: (err?: NodeJS.ErrnoException) => void): void => {
     fs.readdir(dir, (err: NodeJS.ErrnoException, files: string[]) => {
