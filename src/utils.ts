@@ -9,13 +9,13 @@ Marked.setOptions({ highlight: (code, lang) => lang == null? code : highlight(la
 
 
 export const recursiveMd2Html = (dir: string, ext: string, callback: (err?: NodeJS.ErrnoException) => void): void => {
-    fs.readdir(dir, (err: NodeJS.ErrnoException, files: string[]) => {
-        if (err) return callback(err);
+    fs.readdir(dir, (err: NodeJS.ErrnoException | null, files: string[]) => {
+        if (err != null) return callback(err);
         let pending = files.length;
         if (!pending) return callback(void 0);
         files.forEach((fname: string) => {
             fname = path.resolve(dir, fname);
-            fs.stat(fname, (error: NodeJS.ErrnoException, stats: fs.Stats) => {
+            fs.stat(fname, (error: NodeJS.ErrnoException | null, stats: fs.Stats) => {
                 if (error != null) return callback(error);
                 else if (stats && stats.isDirectory()) {
                     if (['node_modules', '.git', /* TODO: parse .gitignore */].indexOf(path.basename(fname)) > -1)
@@ -65,7 +65,7 @@ const parseTemplateUrl = (fname: string, callback: (err?: NodeJS.ErrnoException,
 };
 
 const handleMarkdown = (fname: string, templateUrl: string,
-                        callback: (err?: NodeJS.ErrnoException, to_fname?: string) => void): void => {
+                        callback: (err: NodeJS.ErrnoException | null, to_fname?: string) => void): void => {
     fs.readFile(templateUrl, 'utf8', (err, data) => {
         if (err != null) callback(err);
         const to_fname = `${templateUrl.substr(0, templateUrl.length - 3)}.html`;
@@ -73,7 +73,7 @@ const handleMarkdown = (fname: string, templateUrl: string,
     });
 };
 
-const escapeBrace = (fname: string, ext: string, callback: (err?: NodeJS.ErrnoException) => void): void => {
+const escapeBrace = (fname: string, ext: string, callback: (err: NodeJS.ErrnoException | null) => void): void => {
     // TODO: Character by character parser, to support one line blocks
 
     const lineReader = readline.createInterface({
