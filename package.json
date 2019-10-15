@@ -1,38 +1,16 @@
 {
   "name": "ng-md-components",
-  "version": "0.0.10",
   "description": "Markdown `templateUrl` support for Angular",
-  "keywords": [
-    "angular",
-    "markdown",
-    "oclif",
-    "CLI",
-    "templateUrl"
-  ],
-  "homepage": "https://github.com/SamuelMarks/ng-md-components",
-  "bugs": "https://github.com/SamuelMarks/ng-md-components/issues",
-  "repository": "SamuelMarks/ng-md-components",
-  "license": "MIT",
+  "version": "0.0.11",
   "author": "Samuel Marks @SamuelMarks",
-  "files": [
-    "/bin",
-    "/lib"
-  ],
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
   "bin": {
     "ng-md-components": "./bin/run"
   },
-  "scripts": {
-    "prepack": "rm -rf lib && tsc -b",
-    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "posttest": "tslint -p test -t stylish"
-  },
+  "bugs": "https://github.com/SamuelMarks/ng-md-components/issues",
   "dependencies": {
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.13.3",
     "@oclif/plugin-help": "^2.2.1",
-    "@types/highlight.js": "^9.12.3",
     "highlight.js": "^9.15.10",
     "marked-ts": "^1.0.0-beta.4",
     "tslib": "^1.10.0"
@@ -41,11 +19,12 @@
     "@oclif/test": "^1.2.5",
     "@oclif/tslint": "^3.1.1",
     "@types/chai": "^4.2.3",
+    "@types/highlight.js": "^9.12.3",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.12",
+    "@types/node": "^10.14.21",
     "chai": "^4.2.0",
-    "mocha": "^6.2.1",
-    "nyc": "^14.1.1",
+    "mocha": "^5.2.0",
+    "nyc": "^13.3.0",
     "ts-node": "^8.4.1",
     "tslint": "^5.20.0",
     "typescript": "^3.6.4"
@@ -53,7 +32,28 @@
   "engines": {
     "node": ">=8.0.0"
   },
+  "files": [
+    "/bin",
+    "/lib"
+  ],
+  "homepage": "https://github.com/SamuelMarks/ng-md-components",
+  "keywords": [
+    "angular",
+    "markdown",
+    "oclif",
+    "CLI",
+    "templateUrl"
+  ],
+  "license": "(Apache-2.0 OR MIT)",
+  "main": "lib/index.js",
   "oclif": {
     "bin": "ng-md-components"
-  }
+  },
+  "repository": "SamuelMarks/ng-md-components",
+  "scripts": {
+    "posttest": "tslint -p test -t stylish",
+    "prepack": "rm -rf lib && tsc -b",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\""
+  },
+  "types": "lib/index.d.ts"
 }
