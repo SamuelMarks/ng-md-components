@@ -6,6 +6,7 @@ Markdown `templateUrl` support for Angular
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/ng-md-components.svg)](https://npmjs.org/package/ng-md-components)
 [![Downloads/week](https://img.shields.io/npm/dw/ng-md-components.svg)](https://npmjs.org/package/ng-md-components)
+[![npm-publish](https://github.com/SamuelMarks/ng-md-components/workflows/npm-publish/badge.svg)](https://github.com/SamuelMarks/ng-md-components/actions)
 [![License](https://img.shields.io/npm/l/ng-md-components.svg)](https://github.com/SamuelMarks/ng-md-components/blob/master/package.json)
 
 <!-- toc -->
